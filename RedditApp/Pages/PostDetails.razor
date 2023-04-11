@@ -1,5 +1,20 @@
-﻿<h3>PostDetails</h3>
+﻿@page "/postdetails/{Id:int}"
+@using RedditApp.Services
+@using RedditApp.Data.Models
+@inject PostService PostService
+
+<h1>@post.Title</h1>
+<p>@post.Body</p>
+<p>Posted by @post.CreatedBy</p>
 
 @code {
+    [Parameter]
+    public int Id { get; set; }
 
+    private Post post;
+
+    protected override void OnInitialized()
+    {
+        post = PostService.GetPostById(Id);
+    }
 }

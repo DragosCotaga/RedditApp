@@ -6,42 +6,56 @@ namespace RedditApp.Controllers
 {
 
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class UserController : ControllerBase
     {
-        private readonly UserService _userService;
+        private readonly UserRepository _userRepository;
 
-        public UserController(UserService userService)
+        public UserController(UserRepository userRepository)
         {
-            _userService = userService;
+            _userRepository = userRepository;
         }
 
         [HttpGet]
-        public ActionResult<List<User>> GetAllUsers()
+        public IEnumerable<User> GetUsers()
         {
-            return _userService.GetAllUsers();
+            return _userRepository.GetAll();
         }
 
         [HttpGet("{id}")]
-        public ActionResult<User> GetUserById(int id)
+        public ActionResult<User> GetUser(int id)
         {
-            var user = _userService.GetUserById(id);
-
+            var user = _userRepository.GetById(id);
             if (user == null)
             {
                 return NotFound();
             }
-
             return user;
         }
 
-        [HttpPost("register")]
-        public ActionResult<User> RegisterUser(User user)
+        [HttpPost]
+        public ActionResult<User> CreateUser(User user)
         {
-            _userService.RegisterUser(user);
-            return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, user);
+            _userRepository.Create(user);
+            return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
         }
 
-        // Add more methods for user authentication, updating user details, etc.
+        [HttpPut("{id}")]
+        public IActionResult UpdateUser(int id, User user)
+        {
+            if (id != user.Id)
+            {
+                return BadRequest();
+            }
+            _userRepository.Update(user);
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeleteUser(int id)
+        {
+            _userRepository.Delete(id);
+            return NoContent();
+        }
     }
 }

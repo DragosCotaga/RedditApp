@@ -4,45 +4,57 @@ using RedditApp.Services;
 
 namespace RedditApp.Controllers
 {
-
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class PostController : ControllerBase
     {
+        private readonly PostRepository _postRepository;
 
-        private readonly PostService _postService;
-
-        public PostController(PostService postService)
+        public PostController(PostRepository postRepository)
         {
-            _postService = postService;
+            _postRepository = postRepository;
         }
 
         [HttpGet]
-        public ActionResult<List<Post>> GetAllPosts()
+        public IEnumerable<Post> GetPosts()
         {
-            return _postService.GetAllPosts();
+            return _postRepository.GetAll();
         }
 
         [HttpGet("{id}")]
-        public ActionResult<Post> GetPostById(int id)
+        public ActionResult<Post> GetPost(int id)
         {
-            var post = _postService.GetPostById(id);
-
+            var post = _postRepository.GetById(id);
             if (post == null)
             {
                 return NotFound();
             }
-
             return post;
         }
 
         [HttpPost]
         public ActionResult<Post> CreatePost(Post post)
         {
-            _postService.CreatePost(post);
-            return CreatedAtAction(nameof(GetPostById), new { id = post.Id }, post);
+            _postRepository.Create(post);
+            return CreatedAtAction(nameof(GetPost), new { id = post.Id }, post);
         }
 
-        // Add more methods for updating, deleting posts, etc.
+        [HttpPut("{id}")]
+        public IActionResult UpdatePost(int id, Post post)
+        {
+            if (id != post.Id)
+            {
+                return BadRequest();
+            }
+            _postRepository.Update(post);
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeletePost(int id)
+        {
+            _postRepository.Delete(id);
+            return NoContent();
+        }
     }
 }

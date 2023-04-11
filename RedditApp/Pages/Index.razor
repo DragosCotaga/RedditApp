@@ -1,3 +1,14 @@
 ﻿@page "/"
+@using RedditApp.Services
+@inject PostService PostService
 
-<h1>Hello, world!</h1>
+<h1>Posts</h1>
+
+@foreach (var post in PostService.GetAllPosts())
+{
+    <div>
+        <h2>@post.Title</h2>
+        <p>@post.CreatedBy</p>
+        <a href="postdetails/@post.Id">View Post</a>
+    </div>
+}

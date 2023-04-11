@@ -1,5 +1,26 @@
-﻿<h3>CreatePost</h3>
+﻿@page "/createpost"
+@using RedditApp.Services
+@using Microsoft.AspNetCore.Components
+@using RedditApp.Data.Models
+@inject PostService PostService
+
+<h1>Create Post</h1>
+
+<EditForm Model="@post" OnValidSubmit="@SubmitPost">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <InputText id="title" @bind-Value="post.Title" placeholder="Title" />
+    <InputTextArea id="body" @bind-Value="post.Body" placeholder="Body" />
+
+    <button type="submit">Create Post</button>
+</EditForm>
 
 @code {
+    private Post post = new Post();
 
+    private void SubmitPost()
+    {
+        PostService.CreatePost(post);
+    }
 }

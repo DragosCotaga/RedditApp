@@ -6,44 +6,56 @@ namespace RedditApp.Controllers
 {
 
     [ApiController]
-    [Route("api/[controller]")]
-    public class CommentController
+    [Route("[controller]")]
+    public class CommentController : ControllerBase
     {
+        private readonly CommentRepository _commentRepository;
 
-
-        private readonly CommentService _commentService;
-
-        public CommentController(CommentService commentService)
+        public CommentController(CommentRepository commentRepository)
         {
-            _commentService = commentService;
+            _commentRepository = commentRepository;
         }
 
         [HttpGet]
-        public ActionResult<List<Comment>> GetAllComments()
+        public IEnumerable<Comment> GetComments()
         {
-            return _commentService.GetAllComments();
+            return _commentRepository.GetAll();
         }
 
         [HttpGet("{id}")]
-        public ActionResult<Comment> GetCommentById(int id)
+        public ActionResult<Comment> GetComment(int id)
         {
-            var comment = _commentService.GetCommentById(id);
-
+            var comment = _commentRepository.GetById(id);
             if (comment == null)
             {
                 return NotFound();
             }
-
             return comment;
         }
 
         [HttpPost]
         public ActionResult<Comment> CreateComment(Comment comment)
         {
-            _commentService.CreateComment(comment);
-            return CreatedAtAction(nameof(GetCommentById), new { id = comment.Id }, comment);
+            _commentRepository.Create(comment);
+            return CreatedAtAction(nameof(GetComment), new { id = comment.Id }, comment);
         }
 
-        // Add more methods for updating, deleting comments, etc.
+        [HttpPut("{id}")]
+        public IActionResult UpdateComment(int id, Comment comment)
+        {
+            if (id != comment.Id)
+            {
+                return BadRequest();
+            }
+            _commentRepository.Update(comment);
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeleteComment(int id)
+        {
+            _commentRepository.Delete(id);
+            return NoContent();
+        }
     }
 }

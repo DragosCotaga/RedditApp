@@ -1,8 +1,8 @@
 ﻿namespace RedditApp.Data.Repositories
 {
-    public interface IRepository<T>
+    public interface IRepository<T> where T : class
     {
-        List<T> GetAll();
+        IEnumerable<T> GetAll();
         T GetById(int id);
         T Create(T entity);
         T Update(T entity);

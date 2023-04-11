@@ -1,0 +1,26 @@
+﻿@page "/login"
+@using RedditApp.Services
+@using Microsoft.AspNetCore.Components
+@using RedditApp.Data.Models
+@inject UserService UserService
+
+<h1>Login</h1>
+
+<EditForm Model="@credentials" OnValidSubmit="@LogIn">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <InputText id="username" @bind-Value="credentials.Username" placeholder="Username" />
+    <InputText id="password" @bind-Value="credentials.Password" type="password" placeholder="Password" />
+
+    <button type="submit">Login</button>
+</EditForm>
+
+@code {
+    private LoginCredentials credentials = new LoginCredentials();
+
+    private void LogIn()
+    {
+        UserService.Login(credentials);
+    }
+}

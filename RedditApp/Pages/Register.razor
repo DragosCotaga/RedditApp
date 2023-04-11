@@ -1,0 +1,27 @@
+﻿@page "/register"
+@using RedditApp.Services
+@using Microsoft.AspNetCore.Components
+@using RedditApp.Data.Models
+@inject UserService UserService
+
+<h1>Register</h1>
+
+<EditForm Model="@user" OnValidSubmit="@RegisterUser">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <InputText id="username" @bind-Value="user.Username" placeholder="Username" />
+    <InputText id="password" @bind-Value="user.Password" type="password" placeholder="Password" />
+    <InputText id="email" @bind-Value="user.Email" placeholder="Email" />
+
+    <button type="submit">Register</button>
+</EditForm>
+
+@code {
+    private User user = new User();
+
+    private void RegisterUser()
+    {
+        UserService.CreateUser(user);
+    }
+}
